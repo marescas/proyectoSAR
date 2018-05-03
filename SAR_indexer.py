@@ -56,8 +56,8 @@ if __name__ == '__main__':
     docID = {}
     indiceDoc = 1
     Index =  {}
-    coleccion_noticias = sys.argv[1]
-    nombre_indice = sys.argv[2]
+    coleccion_noticias = sys.argv[1] #directorio donde está la coleccion de noticias
+    nombre_indice = sys.argv[2] #nombre del fichero del índice
     docs = listOfDocs(coleccion_noticias) #Obtengo la lista de documentos
     for filename in docs:
         docID[indiceDoc] = filename #para cada fichero guardo su docID en el diccionario
@@ -68,7 +68,7 @@ if __name__ == '__main__':
             texto_limpio = clean_text(root.find("TEXT").text) #limpio el texto de la noticia
             terminos = list(set(texto_limpio.split(" "))) #obtengo los terminos de la noticia
             for term in terminos:
-                anadirTermino(Index,term,indiceDoc,indiceNoticia) #añadimos el termino a la posting list
+                anadirTermino(Index,term,indiceDoc,indiceNoticia) #añadimos el término a la posting list
             indiceNoticia +=1 #incrementamos el identificador de la noticia en el documento
         indiceDoc+=1 #incrementamos el identificador del documento
     saveObject(Index,docID,nombre_indice)
