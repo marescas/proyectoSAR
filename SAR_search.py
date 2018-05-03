@@ -1,5 +1,8 @@
 import sys
 import pickle
+def imprimir(postingResultante,docid):
+    print("El número de noticias encontradas para los terminos especificados es: %d" %len(postingResultante))
+    print(postingResultante)
 def interseccion(postList1, postList2):
     returndata = []
     i = 0
@@ -39,12 +42,15 @@ if __name__ == '__main__':
         result  = []
         if len(consulta_terms) == 1:
             #Si solo hay un terminos
+            result = Index.get(consulta[0])
         else:
             post1 = Index.get(consulta[0])
             post2 = Index.get(consulta[1])
-            result = interseccion(post1,post2)
-        for i in range(2, len(consulta_terms)):
-            post2 = Index.get(consulta[i])
-            result = interseccion(result,post2)
+            if post1 is not None and post2 is not None:
+                result = interseccion(post1,post2)
+            for i in range(2, len(consulta_terms)):
+                post2 = Index.get(consulta[i])
+                if result is not None and post2 is not None:
+                    result = interseccion(result,post2)
             #Result tiene la interseccion de todos los terminos de la consulta
-            
+        imprimir(result,docid)
