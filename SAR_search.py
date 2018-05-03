@@ -28,7 +28,7 @@ if __name__ == '__main__':
     if len(sys.argv) != 2:
         print("Formato incorrecto: python SAR_search nombre_fichero")
         exit()
-    filename = sys.argv[1]
+    fileName = sys.argv[1]
     Index,docid = load_object(fileName)
     while True:
         consulta = input("Introduce la consulta")
@@ -37,5 +37,14 @@ if __name__ == '__main__':
             exit()
         consulta_terms = consulta.split()
         result  = []
-        for i in range(0, len(consulta_terms)-1):
-            print(consulta_terms[i],consulta_terms[i+1])
+        if len(consulta_terms) == 1:
+            #Si solo hay un terminos
+        else:
+            post1 = Index.get(consulta[0])
+            post2 = Index.get(consulta[1])
+            result = interseccion(post1,post2)
+        for i in range(2, len(consulta_terms)):
+            post2 = Index.get(consulta[i])
+            result = interseccion(result,post2)
+            #Result tiene la interseccion de todos los terminos de la consulta
+            
