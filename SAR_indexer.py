@@ -9,7 +9,9 @@ def clean_text(text):
     :param text: recibe el texto a limpiar.
     :return: el texto limpio de caracteres extraños y repeticiones
     """
-    return clean_re.sub(' ', text)
+    text_clean = clean_re.sub(' ', text).lower()
+
+    return text_clean
 def listOfDocs(coleccion_noticias):
     """
     :param coleccion_noticias: recibe el nombre del directorio donde estan las n_noticias
