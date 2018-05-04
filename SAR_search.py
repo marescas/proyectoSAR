@@ -1,6 +1,14 @@
 import sys
 import pickle
 import xml.etree.ElementTree as ET
+def snipped(word,text):
+    try:
+        posicion = text.index(word)
+        result = text[max(0,posicion-500):min(len(text)-1,posicion+500)]
+    except:
+        result =""
+
+    return result
 def listOfNotices(filename):
     """
     :param fileName: recibe el nombre del fichero a procesar
@@ -12,7 +20,7 @@ def listOfNotices(filename):
         for element in listxml:
             listaProcesada.append(element+"</DOC>")
     return listaProcesada[0:-1]
-def imprimir(postingResultante,docid):
+def imprimir(postingResultante,docid,word):
     print("El número de noticias encontradas para los terminos especificados es: %d" %len(postingResultante))
     if len(postingResultante) <= 0:
         return
@@ -38,10 +46,11 @@ def imprimir(postingResultante,docid):
             texto = root.find("TEXT").text
             titulo = root.find("TITLE").text
             print("Título: \n %s" %titulo)
-            #print("Noticia: \n %s" %texto)
+            texto_result = snipped(word,texto)
+            print("Noticia: \n %s" %texto_result)
     else:
         #TODO mostrar los 10 primeros
-        for value in postingResultante:
+        for value in postingResultante[0:min(10,len(postingResultante))]:
             fileNameID = int(value[0])
             noticeID = int(value[1])-1
             fileName = docid.get(fileNameID)
@@ -83,8 +92,6 @@ if __name__ == '__main__':
     if len(sys.argv) != 2:
         print("Formato incorrecto: python SAR_search nombre_fichero")
         exit()
-
-
     fileName = sys.argv[1]
     Index,docid = load_object(fileName)
     print(Index)
@@ -111,4 +118,4 @@ if __name__ == '__main__':
                 if result is not None and post2 is not None:
                     result = interseccion(result,post2)
             #Result tiene la interseccion de todos los terminos de la consulta
-        imprimir(result,docid)
+        imprimir(result,docid,consulta_terms[0])
