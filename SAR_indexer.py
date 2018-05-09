@@ -10,7 +10,6 @@ def clean_text(text):
     :return: el texto limpio de caracteres extraños y repeticiones
     """
     text_clean = clean_re.sub(' ', text).lower()
-
     return text_clean
 def listOfDocs(coleccion_noticias):
     """

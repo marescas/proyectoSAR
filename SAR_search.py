@@ -1,10 +1,20 @@
 import sys
 import pickle
+import re
 import xml.etree.ElementTree as ET
-def snipped(word,text):
+clean_re = re.compile('\W+')
+def clean_text(text):
+    """
+    :param text: recibe el texto a limpiar.
+    :return: el texto limpio de caracteres extraños y repeticiones
+    """
+    text_clean = clean_re.sub(' ', text).lower()
+    return text_clean
+def snipped(word,texto):
     try:
-        posicion = text.index(word)
+        posicion = texto.index(word)
         result = text[max(0,posicion-500):min(len(text)-1,posicion+500)]
+        print(result)
     except:
         result =""
 
@@ -21,9 +31,10 @@ def listOfNotices(filename):
             listaProcesada.append(element+"</DOC>")
     return listaProcesada[0:-1]
 def imprimir(postingResultante,docid,word):
-    print("El número de noticias encontradas para los terminos especificados es: %d" %len(postingResultante))
     if len(postingResultante) <= 0:
-        return
+        print("---------------------------")
+        print("No hay resultados")
+        print("---------------------------")
     if len(postingResultante) <= 2:
         for value in postingResultante:
             fileNameID = int(value[0])
@@ -33,8 +44,9 @@ def imprimir(postingResultante,docid,word):
             root = ET.fromstring(notice) #obtengo el arbol XML
             texto = root.find("TEXT").text
             titulo = root.find("TITLE").text
+            print("---------------------------")
             print("Título: \n %s" %titulo)
-            print("Noticia: \n %s" %texto)
+            print("Noticia: \n %s" %clean_text(texto) )
     elif len(postingResultante) <=5:
         #TODO mostrar titular y snipped
         for value in postingResultante:
@@ -45,8 +57,10 @@ def imprimir(postingResultante,docid,word):
             root = ET.fromstring(notice) #obtengo el arbol XML
             texto = root.find("TEXT").text
             titulo = root.find("TITLE").text
+            print("------------------------------------")
             print("Título: \n %s" %titulo)
             texto_result = snipped(word,texto)
+            print("hola" + texto_result)
             print("Noticia: \n %s" %texto_result)
     else:
         #TODO mostrar los 10 primeros
@@ -58,8 +72,10 @@ def imprimir(postingResultante,docid,word):
             root = ET.fromstring(notice) #obtengo el arbol XML
             texto = root.find("TEXT").text
             titulo = root.find("TITLE").text
+            print("-------------------------------------")
             print("Título: \n %s" %titulo)
             #print("Noticia: \n %s" %texto)
+    print("El número de noticias encontradas para los terminos especificados es: %d" %len(postingResultante))
 
 
 
@@ -78,7 +94,16 @@ def interseccion(postList1, postList2):
         else:
             i+=1
     return returndata
-
+def andNotAlg(postList1,postList2):
+    """
+    Devuelve una lista con los resultados de la operación postList1 and not postList2
+    """
+    print("hola")
+def orAlg(postList1,postList2):
+    """
+    Devuelve una lista con los resultados de la operación postList1 or postList2
+    """
+    print("hola")
 def load_object(fileName):
     """
     Devuelve un objeto tras cargar el fichero
@@ -94,12 +119,13 @@ if __name__ == '__main__':
         exit()
     fileName = sys.argv[1]
     Index,docid = load_object(fileName)
-    print(Index)
+    #print(Index)
     while True:
         consulta = input("Introduce la consulta: ")
         if consulta == "":
             print("Saliendo del programa...")
             exit()
+        consulta = consulta.lower()
         consulta_terms = consulta.split(" ")
         print(consulta_terms)
         result  = []
