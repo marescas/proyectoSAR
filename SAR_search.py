@@ -100,7 +100,21 @@ def andNotAlg(postList1,postList2):
     """
     Devuelve una lista con los resultados de la operación postList1 and not postList2
     """
-    print("hola")
+    returndata = []
+    i = 0
+    j = 0
+    while i<len(postList1) and j < len(postList2):
+        if postList1[i][0] == postList2[j][0] and postList1[i][1] == postList2[j][1]:
+            i+=1
+            j+=1
+        elif postList1[i][0] == postList2[j][0] and postList1[i][1] < postList2[j][1] or postList1[i][0] < postList2[j][0] :
+            returndata.append(postList1[i])
+            i+=1
+        else:
+            j+=1
+    for iPost1 in range(i,len(postList1)):
+        returndata.append(postList1[iPost1])
+    return returndata
 def orAlg(postList1,postList2):
     """
     Devuelve una lista con los resultados de la operación postList1 or postList2
@@ -123,7 +137,7 @@ def orAlg(postList1,postList2):
     for iPost1 in range(i,len(postList1)) :
         returndata.append(postList1[iPost1])
     for iPost2 in range(j,len(postList2)) :
-        returndata.append(postList2[iPost2]) 
+        returndata.append(postList2[iPost2])
     return returndata
 def load_object(fileName):
     """
