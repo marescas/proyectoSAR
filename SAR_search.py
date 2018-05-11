@@ -139,6 +139,8 @@ def orAlg(postList1,postList2):
     for iPost2 in range(j,len(postList2)) :
         returndata.append(postList2[iPost2])
     return returndata
+def andOrNot(consulta):
+    print("Hola!")
 def load_object(fileName):
     """
     Devuelve un objeto tras cargar el fichero
@@ -149,6 +151,7 @@ def load_object(fileName):
         obj,obj2 = pickle.load(fh)
     return obj,obj2
 if __name__ == '__main__':
+    conectivas = "and","or","not"
     if len(sys.argv) != 2:
         print("Formato incorrecto: python SAR_search nombre_fichero")
         exit()
@@ -162,21 +165,23 @@ if __name__ == '__main__':
             exit()
         consulta = consulta.lower()
         consulta_terms = consulta.split(" ")
-        print(consulta_terms)
-        result  = []
-        if len(consulta_terms) == 1:
-            #Si solo hay un terminos
-            result = Index.get(consulta_terms[0])
-            if result is None:
-                result = []
+        if len(set(conectivas).intersection(consulta_terms)) >0:
+            andOrNot(consulta_terms)
         else:
-            post1 = Index.get(consulta_terms[0])
-            post2 = Index.get(consulta_terms[1])
-            if post1 is not None and post2 is not None:
-                result = interseccion(post1,post2)
-            for i in range(2, len(consulta_terms)):
-                post2 = Index.get(consulta_terms[i])
-                if result is not None and post2 is not None:
-                    result = interseccion(result,post2)
-            #Result tiene la interseccion de todos los terminos de la consulta
-        imprimir(result,docid,consulta_terms[0])
+            result  = []
+            if len(consulta_terms) == 1:
+                #Si solo hay un terminos
+                result = Index.get(consulta_terms[0])
+                if result is None:
+                    result = []
+            else:
+                post1 = Index.get(consulta_terms[0])
+                post2 = Index.get(consulta_terms[1])
+                if post1 is not None and post2 is not None:
+                    result = interseccion(post1,post2)
+                for i in range(2, len(consulta_terms)):
+                    post2 = Index.get(consulta_terms[i])
+                    if result is not None and post2 is not None:
+                        result = interseccion(result,post2)
+                #Result tiene la interseccion de todos los terminos de la consulta
+            imprimir(result,docid,consulta_terms[0])
