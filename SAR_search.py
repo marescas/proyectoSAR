@@ -12,9 +12,10 @@ def clean_text(text):
     return text_clean
 def snipped(word,texto):
     try:
+        texto = texto.lower()
         posicion = texto.index(word)
-        result = text[max(0,posicion-500):min(len(text)-1,posicion+500)]
-        print(result)
+        result = texto[max(0,posicion-500):min(len(texto)-1,posicion+500)]
+        #print(result)
     except:
         result =""
 
@@ -58,9 +59,9 @@ def imprimir(postingResultante,docid,word):
             texto = root.find("TEXT").text
             titulo = root.find("TITLE").text
             print("------------------------------------")
-            print("Título: \n %s" %titulo)
-            texto_result = snipped(word,texto)
-            print("hola" + texto_result)
+            print("Título: \n %s" %clean_text(titulo))
+            texto_result = snipped(word,clean_text(texto))
+            #print("hola" + texto)
             print("Noticia: \n %s" %texto_result)
     else:
         #TODO mostrar los 10 primeros
