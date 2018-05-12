@@ -3,6 +3,7 @@ import pickle
 import re
 import xml.etree.ElementTree as ET
 clean_re = re.compile('\W+')
+conectivas = "and","or","andnot"
 def clean_text(text):
     """
     :param text: recibe el texto a limpiar.
@@ -33,6 +34,12 @@ def listOfNotices(filename):
             listaProcesada.append(element+"</DOC>")
     return listaProcesada[0:-1]
 def imprimir(postingResultante,docid,word):
+    """
+    Imprime por consola el resultado de la busqueda de los términosself.
+    :param postingResultante: posting List resultado de las operaciones sobre los términos (AND OR NOT)
+    :param docid: diccionario donde para cada docid tenemos el documento al que hace referencia
+    :param word: *****REVISAR!****** word para la cual se calcula el sniped
+    """
     if len(postingResultante) <= 0:
         print("---------------------------")
         print("No hay resultados")
@@ -78,9 +85,6 @@ def imprimir(postingResultante,docid,word):
             print("Título: \n %s" %titulo)
             #print("Noticia: \n %s" %texto)
     print("El número de noticias encontradas para los terminos especificados es: %d" %len(postingResultante))
-
-
-
 def interseccion(postList1, postList2):
     returndata = []
     i = 0
@@ -139,8 +143,34 @@ def orAlg(postList1,postList2):
     for iPost2 in range(j,len(postList2)) :
         returndata.append(postList2[iPost2])
     return returndata
-def andOrNot(consulta):
-    print("Hola!")
+def operadores(post1,post2,operador):
+    if operador == "and":
+        return interseccion(post1,post2)
+    elif operador == "or":
+        return orAlg(post1,post2)
+    elif operador == "andnot":
+        return andNotAlg(post1,post2)
+def andOrNot(consulta,Index,docID):
+    """
+    Ampliación 1: permitimos consultas del estilo term1 and term2 or term3 and not term4.
+    Podemos suponer que las consultas están correctamente escritas.
+    """
+    print("Ejecutando la primera ampliación")
+    post1 = Index.get(consulta[0])
+    operador = consulta[1]
+    post2 = Index.get(consulta[2])
+    #print("term1:%s operador: %s term2: %s" %(consulta[0],consulta[1],consulta[2]))
+    result = []
+    if post1 is not None and post2 is not None or operador == "or":
+        result = operadores(post1,post2,operador)
+        print(result)
+    for i in range(3, len(consulta)-1):
+        operador = consulta[i]
+        post2 = Index.get(consulta[i+1])
+        #print(" operador: %s term2: %s" %(consulta[i],consulta[i+1]))
+        if result is not None and post2 is not None or operador == "or":
+            result = operadores(result,post2,operador)
+    imprimir(result,docID,"")
 def load_object(fileName):
     """
     Devuelve un objeto tras cargar el fichero
@@ -151,7 +181,7 @@ def load_object(fileName):
         obj,obj2 = pickle.load(fh)
     return obj,obj2
 if __name__ == '__main__':
-    conectivas = "and","or","not"
+
     if len(sys.argv) != 2:
         print("Formato incorrecto: python SAR_search nombre_fichero")
         exit()
@@ -166,7 +196,7 @@ if __name__ == '__main__':
         consulta = consulta.lower()
         consulta_terms = consulta.split(" ")
         if len(set(conectivas).intersection(consulta_terms)) >0:
-            andOrNot(consulta_terms)
+            andOrNot(consulta_terms,Index,docid)
         else:
             result  = []
             if len(consulta_terms) == 1:
