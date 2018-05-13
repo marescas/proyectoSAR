@@ -4,6 +4,20 @@ import os
 import re
 import pickle
 clean_re = re.compile('\W+')
+def permut(word):
+    """
+    Devuelve una lista con todas las posibles permutaciones de una palabra word
+    :param word: Palabra para la que se realizarán todas las permutaciones
+    :return resultList: lista con todas las posibles permutaciones "$" como separador...
+    """
+    resultList = []
+    wordPermutation = word+"$"
+    resultList.append(wordPermutation)
+    while wordPermutation[0] != "$":
+        wordPermutation = wordPermutation[1:]+wordPermutation[0]
+        resultList.append(wordPermutation)
+    return resultList
+
 def clean_text(text):
     """
     :param text: recibe el texto a limpiar.
