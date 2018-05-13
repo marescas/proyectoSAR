@@ -73,6 +73,9 @@ if __name__ == '__main__':
     docID = {}
     indiceDoc = 1
     Index =  {}
+    IndexHeadLine = {} #Índice invertido para los titulares AMPLIACIÓN 2
+    IndexDate = {} #Índice invertido para las fechas AMPLIACIÓN 2
+    IndexCategory = {} #Índice invertido para las categorias AMPLIACIÓN 2
     coleccion_noticias = sys.argv[1] #directorio donde está la coleccion de noticias
     nombre_indice = sys.argv[2] #nombre del fichero del índice
     docs = listOfDocs(coleccion_noticias) #Obtengo la lista de documentos
@@ -86,7 +89,23 @@ if __name__ == '__main__':
             terminos = list(set(texto_limpio.split(" "))) #obtengo los terminos de la noticia
             for term in terminos:
                 anadirTermino(Index,term,indiceDoc,indiceNoticia) #añadimos el término a la posting list
+            #Creamos los índices para los titulares, las fechas y las categorias, Corresponde a la AMPLIACIÓN 2
+            texto_limpio = clean_text(root.find("TITLE").text) #titular
+            terminos = list(set(texto_limpio.split(" ")))
+            for term in terminos:
+                anadirTermino(IndexHeadLine,term,indiceDoc,indiceNoticia)
+            texto_limpio = clean_text(root.find("DATE").text) #fecha
+            terminos = list(set(texto_limpio.split(" ")))
+            for term in terminos:
+                anadirTermino(IndexDate,term,indiceDoc,indiceNoticia)
+            if root.find("CATEGORY").text is not None: #Hay al menos una noticia que no tiene categoria
+                texto_limpio = clean_text(root.find("CATEGORY").text) #Categoria
+                terminos = list(set(texto_limpio.split(" ")))
+                for term in terminos:
+                    anadirTermino(IndexCategory,term,indiceDoc,indiceNoticia)
             indiceNoticia +=1 #incrementamos el identificador de la noticia en el documento
         indiceDoc+=1 #incrementamos el identificador del documento
-    saveObject(Index,docID,nombre_indice)
+    saveObject(Index,docID,nombre_indice) #TODO guardar los indices en fichero
+    print(IndexCategory)
+
     print("Guardado con éxito en el fichero %s" %nombre_indice)
