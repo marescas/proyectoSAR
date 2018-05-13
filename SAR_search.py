@@ -4,6 +4,18 @@ import re
 import xml.etree.ElementTree as ET
 clean_re = re.compile('\W+')
 conectivas = "and","or","andnot"
+terminos_ampliado = "headline","text","category","date"
+def busquedaAmpliada():
+    """
+    Este código se corresponde a la busqueda ampliada de la amplación propuesta 2
+
+    """
+    print("hola")
+def busquedaPosicional():
+    """
+    Este código se corresponde a la implementación de la busqueda posicional Ampliación propuesta 3
+    """
+    print("hola")
 def clean_text(text):
     """
     :param text: recibe el texto a limpiar.
