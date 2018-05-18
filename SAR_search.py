@@ -5,17 +5,20 @@ import xml.etree.ElementTree as ET
 clean_re = re.compile('\W+')
 conectivas = "and","or","andnot"
 terminos_ampliado = "headline","text","category","date"
+
 def busquedaAmpliada():
     """
     Este código se corresponde a la busqueda ampliada de la amplación propuesta 2
 
     """
     print("hola")
+
 def busquedaPosicional():
     """
     Este código se corresponde a la implementación de la busqueda posicional Ampliación propuesta 3
     """
     print("hola")
+
 def clean_text(text):
     """
     :param text: recibe el texto a limpiar.
@@ -23,6 +26,7 @@ def clean_text(text):
     """
     text_clean = clean_re.sub(' ', text).lower()
     return text_clean
+
 def snipped(word,texto):
     #TODO en el boletín comentan otra forma de resolverlo...
     try:
@@ -34,6 +38,7 @@ def snipped(word,texto):
         result =""
 
     return result
+
 def listOfNotices(filename):
     """
     :param fileName: recibe el nombre del fichero a procesar
@@ -45,6 +50,7 @@ def listOfNotices(filename):
         for element in listxml:
             listaProcesada.append(element+"</DOC>")
     return listaProcesada[0:-1]
+
 def imprimir(postingResultante,docid,word):
     """
     Imprime por consola el resultado de la busqueda de los términosself.
@@ -97,6 +103,7 @@ def imprimir(postingResultante,docid,word):
             print("Título: \n %s" %titulo)
             #print("Noticia: \n %s" %texto)
     print("El número de noticias encontradas para los terminos especificados es: %d" %len(postingResultante))
+
 def interseccion(postList1, postList2):
     returndata = []
     i = 0
@@ -112,6 +119,7 @@ def interseccion(postList1, postList2):
         elif postList1[i][0] == postList2[j][0] and postList1[i][1] > postList2[j][1] or postList1[i][0] > postList2[j][0]:
             j+=1
     return returndata
+
 def andNotAlg(postList1,postList2):
     """
     Devuelve una lista con los resultados de la operación postList1 and not postList2
@@ -131,6 +139,7 @@ def andNotAlg(postList1,postList2):
     for iPost1 in range(i,len(postList1)):
         returndata.append(postList1[iPost1])
     return returndata
+
 def orAlg(postList1,postList2):
     """
     Devuelve una lista con los resultados de la operación postList1 or postList2
@@ -155,6 +164,7 @@ def orAlg(postList1,postList2):
     for iPost2 in range(j,len(postList2)) :
         returndata.append(postList2[iPost2])
     return returndata
+
 def operadores(post1,post2,operador):
     if operador == "and":
         return interseccion(post1,post2)
@@ -162,6 +172,7 @@ def operadores(post1,post2,operador):
         return orAlg(post1,post2)
     elif operador == "andnot":
         return andNotAlg(post1,post2)
+
 def andOrNot(consulta,Index,docID):
     """
     Ampliación 1: permitimos consultas del estilo term1 and term2 or term3 and not term4.
@@ -183,6 +194,7 @@ def andOrNot(consulta,Index,docID):
         if result is not None and post2 is not None or operador == "or":
             result = operadores(result,post2,operador)
     imprimir(result,docID,"")
+
 def load_object(fileName):
     """
     Devuelve un objeto tras cargar el fichero
@@ -192,14 +204,14 @@ def load_object(fileName):
     with open(fileName,"rb") as fh:
         obj,obj2 = pickle.load(fh)
     return obj,obj2
+
 if __name__ == '__main__':
 
     if len(sys.argv) != 2:
-        print("Formato incorrecto: python SAR_search nombre_fichero")
+        print("Error: El formato esperado es 'python SAR_search.py nombre_fichero'")
         exit()
     fileName = sys.argv[1]
-    Index,docid = load_object(fileName)
-    #print(Index)
+    Index,docid,IndexHeadLine,IndexDate,IndexCategory = load_object(fileName)
     while True:
         consulta = input("Introduce la consulta: ")
         if consulta == "":
