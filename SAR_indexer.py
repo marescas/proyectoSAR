@@ -89,6 +89,7 @@ if __name__ == '__main__':
         notices = listOfNotices(filename) #obtengo la lista de noticias de ese documento
         indiceNoticia = 1
         for r in notices: # Cada r es una noticia
+            # TODO: (docID,noticeID) (Añadir universo)
             root = ET.fromstring(r) #obtengo el arbol XML
             texto_limpio = clean_text(root.find("TEXT").text) #limpio el texto de la noticia
             terminos = list(set(texto_limpio.split(" "))) #obtengo los terminos de la noticia
@@ -113,5 +114,7 @@ if __name__ == '__main__':
         indiceDoc+=1 #incrementamos el identificador del documento
     # Guarda los índices en "nombre_indice"
     saveObject(Index, docID, IndexHeadLine, IndexDate, IndexCategory, nombre_indice)
+
+    print(docID)
 
     print('Guardado con éxito en el fichero "%s".' %nombre_indice)
