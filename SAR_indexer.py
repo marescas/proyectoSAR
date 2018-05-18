@@ -61,14 +61,14 @@ def anadirTermino(Index, termino, docID, noticeID):
         Index[termino] = []
     Index[termino].append(posicion)
 
-def saveObject(object1,object2,outputFile):
+def saveObject(obj1, obj2, obj3, obj4, obj5, outputFile):
     """
-    Guarda el objeto en el fichero
-    :param object: objeto a guardar
-    :param outputFile: Fichero en el que se guardará el objeto
+    Guarda los objetos en el fichero
+    :param obj1-5: objeto a guardar
+    :param outputFile: Fichero en el que se guardarán los objetos
     """
     with open(outputFile,"wb") as fh:
-        object = (object1,object2)
+        object = (obj1,obj2,obj3,obj4,obj5)
         pickle.dump(object,fh)
 
 if __name__ == '__main__':
@@ -93,7 +93,8 @@ if __name__ == '__main__':
             texto_limpio = clean_text(root.find("TEXT").text) #limpio el texto de la noticia
             terminos = list(set(texto_limpio.split(" "))) #obtengo los terminos de la noticia
             for term in terminos:
-                anadirTermino(Index,term,indiceDoc,indiceNoticia) #añadimos el término a la posting list
+                # Añadimos el término a la posting list
+                anadirTermino(Index,term,indiceDoc,indiceNoticia)
             #Creamos los índices para los titulares, las fechas y las categorias, Corresponde a la AMPLIACIÓN 2
             texto_limpio = clean_text(root.find("TITLE").text) #titular
             terminos = list(set(texto_limpio.split(" ")))
@@ -110,6 +111,7 @@ if __name__ == '__main__':
                     anadirTermino(IndexCategory,term,indiceDoc,indiceNoticia)
             indiceNoticia +=1 #incrementamos el identificador de la noticia en el documento
         indiceDoc+=1 #incrementamos el identificador del documento
-    saveObject(Index,docID,nombre_indice) #TODO guardar los indices en fichero
+    # Guarda los índices en "nombre_indice"
+    saveObject(Index, docID, IndexHeadLine, IndexDate, IndexCategory, nombre_indice)
 
     print('Guardado con éxito en el fichero "%s".' %nombre_indice)
