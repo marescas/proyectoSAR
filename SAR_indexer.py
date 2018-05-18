@@ -68,7 +68,7 @@ def saveObject(object1,object2,outputFile):
         pickle.dump(object,fh)
 if __name__ == '__main__':
     if len(sys.argv) != 3:
-        print("Error: El formato esperado es: python SAR_indexer dir_colección_noticias nombre_índice")
+        print("Error: El formato esperado es 'python SAR_indexer dir_colección_noticias nombre_índice'")
         exit()
     docID = {}
     indiceDoc = 1
