@@ -119,7 +119,8 @@ def interseccion(postList1, postList2):
         elif postList1[i][0] == postList2[j][0] and postList1[i][1] > postList2[j][1] or postList1[i][0] > postList2[j][0]:
             j+=1
     return returndata
-
+def notAlg(postingList1):
+    return "hola" #Realmente, sería necesario devolver andNotAlg(Universo,postList1)
 def andNotAlg(postList1,postList2):
     """
     Devuelve una lista con los resultados de la operación postList1 and not postList2
@@ -179,9 +180,18 @@ def andOrNot(consulta,Index,docID):
     Podemos suponer que las consultas están correctamente escritas.
     """
     print("Ejecutando la primera ampliación")
+    extension = []
+    for i in range(0,len(consulta)):
+        if i %2 != 0 and consulta[i] not in conectivas:
+            extension.append("and")
+        else:
+            extension.append(consulta[i])
+    consulta = extension
+    print(consulta)
     post1 = Index.get(consulta[0])
     operador = consulta[1]
     post2 = Index.get(consulta[2])
+
     #print("term1:%s operador: %s term2: %s" %(consulta[0],consulta[1],consulta[2]))
     result = []
     if post1 is not None and post2 is not None or operador == "or":
