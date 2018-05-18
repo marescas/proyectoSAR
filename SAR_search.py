@@ -202,8 +202,8 @@ def load_object(fileName):
     :return: objeto
     """
     with open(fileName,"rb") as fh:
-        obj,obj2 = pickle.load(fh)
-    return obj,obj2
+        obj1,obj2,obj3,obj4,obj5 = pickle.load(fh)
+    return obj1,obj2,obj3,obj4,obj5
 
 if __name__ == '__main__':
     if len(sys.argv) != 2:
