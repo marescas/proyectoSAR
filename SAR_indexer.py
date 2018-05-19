@@ -61,7 +61,7 @@ def anadirTermino(Index, termino, docID, noticeID):
         Index[termino] = []
     Index[termino].append(posicion)
 
-def saveObject(obj1, obj2, obj3, obj4, obj5, outputFile):
+def saveObject(obj1, obj2, obj3, obj4, obj5, obj6, outputFile):
     """
     Guarda los objetos en el fichero
     :param obj1-5: objeto a guardar
@@ -80,6 +80,7 @@ if __name__ == '__main__':
     IndexHeadLine = {} #Índice invertido para los titulares AMPLIACIÓN 2
     IndexDate = {} #Índice invertido para las fechas AMPLIACIÓN 2
     IndexCategory = {} #Índice invertido para las categorias AMPLIACIÓN 2
+    Universe = [] # Todas las noticas y documentos en formato (docID,noticeID)
     coleccion_noticias = sys.argv[1] #directorio donde está la coleccion de noticias
     nombre_indice = sys.argv[2] #nombre del fichero del índice
     docs = listOfDocs(coleccion_noticias) #Obtengo la lista de documentos
@@ -90,6 +91,7 @@ if __name__ == '__main__':
         indiceNoticia = 1
         for r in notices: # Cada r es una noticia
             # TODO: (docID,noticeID) (Añadir universo)
+            Universe.append((indiceDoc,indiceNoticia))
             root = ET.fromstring(r) #obtengo el arbol XML
             texto_limpio = clean_text(root.find("TEXT").text) #limpio el texto de la noticia
             terminos = list(set(texto_limpio.split(" "))) #obtengo los terminos de la noticia
@@ -113,6 +115,6 @@ if __name__ == '__main__':
             indiceNoticia +=1 #incrementamos el identificador de la noticia en el documento
         indiceDoc+=1 #incrementamos el identificador del documento
     # Guarda los índices en "nombre_indice"
-    saveObject(Index, docID, IndexHeadLine, IndexDate, IndexCategory, nombre_indice)
+    saveObject(Index,docID,IndexHeadLine,IndexDate,IndexCategory,Universe,nombre_indice)
 
     print('Guardado con éxito en el fichero "%s".' %nombre_indice)
