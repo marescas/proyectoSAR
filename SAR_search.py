@@ -176,6 +176,22 @@ def operadores(post1,post2,operador):
     elif operador == "andnot":
         return andNotAlg(post1,post2)
 
+# TODO: Sustituir los Index.get por este método
+def getIndex(word):
+    """
+    Ampliación 2: obtiene las referencias de los ficheros en la cual aparece
+    esa palabra para el campo indicado (headline,text,category,date)
+    """
+    words = word.split(":")
+    if len(words) == 1:
+        return Index.get(word)
+    else:
+        hacer switch
+            case words[0] == headline...
+                return IndexHeadLine.get(word)
+        etc...
+    # TODO: Terminar método
+
 def andOrNot(consulta,Index,docID):
     """
     Ampliación 1: permitimos consultas del estilo term1 and term2 or term3 and not term4.
