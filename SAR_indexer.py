@@ -115,6 +115,4 @@ if __name__ == '__main__':
     # Guarda los índices en "nombre_indice"
     saveObject(Index, docID, IndexHeadLine, IndexDate, IndexCategory, nombre_indice)
 
-    print(docID)
-
     print('Guardado con éxito en el fichero "%s".' %nombre_indice)
