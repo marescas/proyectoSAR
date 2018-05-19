@@ -64,11 +64,11 @@ def anadirTermino(Index, termino, docID, noticeID):
 def saveObject(obj1, obj2, obj3, obj4, obj5, obj6, outputFile):
     """
     Guarda los objetos en el fichero
-    :param obj1-5: objeto a guardar
+    :param obj1-6: objeto a guardar
     :param outputFile: Fichero en el que se guardarán los objetos
     """
     with open(outputFile,"wb") as fh:
-        object = (obj1,obj2,obj3,obj4,obj5)
+        object = (obj1,obj2,obj3,obj4,obj5,obj6)
         pickle.dump(object,fh)
 
 if __name__ == '__main__':

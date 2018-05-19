@@ -30,12 +30,12 @@ def clean_text(text):
 def snipped(word,texto):
     #TODO en el boletín comentan otra forma de resolverlo...
     try:
-        texto = texto.lower()
-        posicion = texto.index(word)
-        result = texto[max(0,posicion-500):min(len(texto)-1,posicion+500)]
-        #print(result)
+        aux = texto.lower().split()
+        posicion = aux.index(word)
+        result = aux[max(0,posicion-10):min(len(aux)-1,posicion+10)]
+        result = " ".join(result)
     except:
-        result =""
+        result = ""
 
     return result
 
@@ -56,12 +56,12 @@ def imprimir(postingResultante,docid,word):
     Imprime por consola el resultado de la busqueda de los términosself.
     :param postingResultante: posting List resultado de las operaciones sobre los términos (AND OR NOT)
     :param docid: diccionario donde para cada docid tenemos el documento al que hace referencia
-    :param word: *****REVISAR!****** word para la cual se calcula el sniped
+    :param word: *****REVISAR!****** word para la cual se calcula el snipped
     """
     if len(postingResultante) <= 0:
-        print("---------------------------")
+        print("\n------------------------------------")
         print("No hay resultados")
-        print("---------------------------")
+        print("\n------------------------------------")
     if len(postingResultante) <= 2:
         for value in postingResultante:
             fileNameID = int(value[0])
@@ -71,9 +71,9 @@ def imprimir(postingResultante,docid,word):
             root = ET.fromstring(notice) #obtengo el arbol XML
             texto = root.find("TEXT").text
             titulo = root.find("TITLE").text
-            print("---------------------------")
-            print("Título: \n %s" %titulo)
-            print("Noticia: \n %s" %clean_text(texto) )
+            print("\n------------------------------------")
+            print("\nTítulo: \n %s" %titulo)
+            print("\nNoticia: \n %s" %clean_text(texto) )
     elif len(postingResultante) <=5:
         #TODO mostrar titular y snipped
         for value in postingResultante:
@@ -84,11 +84,11 @@ def imprimir(postingResultante,docid,word):
             root = ET.fromstring(notice) #obtengo el arbol XML
             texto = root.find("TEXT").text
             titulo = root.find("TITLE").text
-            print("------------------------------------")
-            print("Título: \n %s" %clean_text(titulo))
+            print("\n------------------------------------")
+            print("\nTítulo: \n %s" %clean_text(titulo))
             texto_result = snipped(word,clean_text(texto))
             #print("hola" + texto)
-            print("Noticia: \n %s" %texto_result)
+            print("\nNoticia: \n %s" %texto_result)
     else:
         #TODO mostrar los 10 primeros
         for value in postingResultante[0:min(10,len(postingResultante))]:
@@ -99,10 +99,12 @@ def imprimir(postingResultante,docid,word):
             root = ET.fromstring(notice) #obtengo el arbol XML
             texto = root.find("TEXT").text
             titulo = root.find("TITLE").text
-            print("-------------------------------------")
-            print("Título: \n %s" %titulo)
+            print("\n-------------------------------------")
+            print("\nTítulo: \n %s" %titulo)
             #print("Noticia: \n %s" %texto)
+    print("\n--------------------------------------------------------------------------")
     print("El número de noticias encontradas para los terminos especificados es: %d" %len(postingResultante))
+    print("--------------------------------------------------------------------------\n")
 
 def interseccion(postList1, postList2):
     returndata = []
@@ -212,19 +214,19 @@ def load_object(fileName):
     :return: objeto
     """
     with open(fileName,"rb") as fh:
-        obj1,obj2,obj3,obj4,obj5 = pickle.load(fh)
-    return obj1,obj2,obj3,obj4,obj5
+        obj1,obj2,obj3,obj4,obj5,obj6 = pickle.load(fh)
+    return obj1,obj2,obj3,obj4,obj5,obj6
 
 if __name__ == '__main__':
     if len(sys.argv) != 2:
         print("Error: El formato esperado es 'python SAR_search.py nombre_fichero'")
         exit()
     fileName = sys.argv[1]
-    Index,docid,IndexHeadLine,IndexDate,IndexCategory = load_object(fileName)
+    Index,docid,IndexHeadLine,IndexDate,IndexCategory,Universe = load_object(fileName)
     while True:
-        consulta = input("Introduce la consulta: ")
+        consulta = input("\nIntroduce la consulta: ")
         if consulta == "":
-            print("Saliendo del programa...")
+            print("\nSaliendo del programa...\n")
             exit()
         consulta = consulta.lower()
         consulta_terms = consulta.split(" ")
