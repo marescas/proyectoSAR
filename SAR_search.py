@@ -75,7 +75,6 @@ def imprimir(postingResultante,docid,words):
                 snip = snipped(w,clean_text(texto))
                 if snip != "":
                     texto_result = texto_result + "\n" + snip
-            #print("hola" + texto)
             print("\nNoticia: \n %s" %texto_result)
     else:
         for value in postingResultante[0:min(10,len(postingResultante))]:
@@ -111,7 +110,6 @@ def andnotAlg(postList1,postList2):
     """
     Devuelve una lista con los resultados de la operación postList1 and not postList2
     """
-    print("hola")
     return list(set(postList1)-set(postList2))
     # returndata = []
     # i = 0
@@ -153,10 +151,9 @@ def orAlg(postList1,postList2):
         returndata.append(postList2[iPost2])
     return returndata
 
-def ornotAlg(postList1,postList2):
-    return None
-
 def operadores(post1,post2,operador):
+    if post2 == None:
+        post2 = []
     if operador == "and":
         return interseccion(post1,post2)
     elif operador == "or":
@@ -164,7 +161,7 @@ def operadores(post1,post2,operador):
     elif operador == "andnot":
         return andnotAlg(post1,post2)
     elif operador == "ornot":
-        return ornotAlg(post1,post2)
+        return orAlg(postList1,list(set(Universe)-set(postList2)))
 
 # TODO: Rehacer todo el método y pasar en el último parámetro del método
 #       "imprimir" todas las palábras que aparecen.
@@ -178,7 +175,10 @@ def andOrNot(consulta,docID):
         try:
             aux.pop(0) # Eliminamos el "not" inicial
             # Y añadimos la postingList negada de la primera palabra
-            result = list(set(Universe)-set(getIndex(aux.pop(0))))
+            postL = getIndex(aux.pop(0))
+            if postL == None:
+                postL = []
+            result = list(set(Universe)-set(postL))
         except:
             result = []
     else:
@@ -186,7 +186,8 @@ def andOrNot(consulta,docID):
         result = getIndex(aux.pop(0))
     for i in range(0,len(aux)):
         # El resto de "not" actuarán como "andnot"
-        aux[i] = aux[i].replace("not","andnot")
+        if aux[i] != "andnot":
+            aux[i] = aux[i].replace("not","andnot")
     # Ahora pasamos a ampliar (o disminuir) el "result" con el resto de la consulta.
     i = 0
     while i < len(aux):
@@ -194,7 +195,7 @@ def andOrNot(consulta,docID):
             result = operadores(result,getIndex(aux[i+1]),aux[i])
             i = i+2
         else:
-            result = operadores(result,getIndex(aux[i+1]),"and")
+            result = operadores(result,getIndex(aux[i]),"and")
             i = i+1
     imprimir(result,docID,list(set(consulta) - set(conectivas)))
 
@@ -239,9 +240,9 @@ if __name__ == '__main__':
             print("\nSaliendo del programa...\n")
             exit()
         consulta = consulta.lower()
-        consulta = consulta.replace('and not', 'andnot')
-        consulta = consulta.replace('or not', 'ornot')
-        consulta = consulta.replace('and', '')
+        consulta = consulta.replace(' and not ', ' andnot ')
+        consulta = consulta.replace(' or not ', ' ornot ')
+        consulta = consulta.replace(' and ', ' ')
         consulta_terms = consulta.split()
         # En caso de que haya alguna conectiva, entramos en el método andOrNot
         if len(set(conectivas).intersection(consulta_terms)) > 0:
@@ -264,5 +265,5 @@ if __name__ == '__main__':
                     post2 = getIndex(consulta_terms[i])
                     if result is not None and post2 is not None:
                         result = interseccion(result,post2)
-                #Result tiene la interseccion de todos los terminos de la consulta
+                # "result" tiene la interseccion de todos los terminos de la consulta
             imprimir(result,docid,consulta_terms)
