@@ -110,22 +110,21 @@ def andnotAlg(postList1,postList2):
     """
     Devuelve una lista con los resultados de la operación postList1 and not postList2
     """
-    return list(set(postList1)-set(postList2))
-    # returndata = []
-    # i = 0
-    # j = 0
-    # while i<len(postList1) and j < len(postList2):
-    #     if postList1[i][0] == postList2[j][0] and postList1[i][1] == postList2[j][1]:
-    #         i+=1
-    #         j+=1
-    #     elif postList1[i][0] == postList2[j][0] and postList1[i][1] < postList2[j][1] or postList1[i][0] < postList2[j][0] :
-    #         returndata.append(postList1[i])
-    #         i+=1
-    #     else:
-    #         j+=1
-    # for iPost1 in range(i,len(postList1)):
-    #     returndata.append(postList1[iPost1])
-    # return returndata
+    returndata = []
+    i = 0
+    j = 0
+    while i<len(postList1) and j < len(postList2):
+        if postList1[i][0] == postList2[j][0] and postList1[i][1] == postList2[j][1]:
+            i+=1
+            j+=1
+        elif postList1[i][0] == postList2[j][0] and postList1[i][1] < postList2[j][1] or postList1[i][0] < postList2[j][0] :
+            returndata.append(postList1[i])
+            i+=1
+        else:
+            j+=1
+    for iPost1 in range(i,len(postList1)):
+        returndata.append(postList1[iPost1])
+    return returndata
 
 def orAlg(postList1,postList2):
     """
@@ -139,7 +138,7 @@ def orAlg(postList1,postList2):
             returndata.append(postList1[i])
             i+=1
             j+=1
-        elif postList1[i][0] == postList2[j][0] and postList1[i][1] < postList2[j][1] or postList1[i][0] < postList2[j][0] :
+        elif postList1[i][0] == postList2[j][0] and postList1[i][1] < postList2[j][1] or postList1[i][0] < postList2[j][0]:
             returndata.append(postList1[i])
             i+=1
         elif postList1[i][0] == postList2[j][0] and postList1[i][1] > postList2[j][1] or postList1[i][0] > postList2[j][0]:
@@ -163,8 +162,6 @@ def operadores(post1,post2,operador):
     elif operador == "ornot":
         return orAlg(postList1,list(set(Universe)-set(postList2)))
 
-# TODO: Rehacer todo el método y pasar en el último parámetro del método
-#       "imprimir" todas las palábras que aparecen.
 def andOrNot(consulta,docID):
     """
     Ampliación 1: permitimos consultas del estilo term1 and term2 or term3 andnot term4.
