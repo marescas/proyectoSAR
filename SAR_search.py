@@ -3,21 +3,8 @@ import pickle
 import re
 import xml.etree.ElementTree as ET
 clean_re = re.compile('\W+')
-conectivas = "and","or","andnot"
+conectivas = "and","or","andnot", "not", "ornot"
 terminos_ampliado = "headline","text","category","date"
-
-def busquedaAmpliada():
-    """
-    Este código se corresponde a la busqueda ampliada de la amplación propuesta 2
-
-    """
-    print("hola")
-
-def busquedaPosicional():
-    """
-    Este código se corresponde a la implementación de la busqueda posicional Ampliación propuesta 3
-    """
-    print("hola")
 
 def clean_text(text):
     """
@@ -28,15 +15,13 @@ def clean_text(text):
     return text_clean
 
 def snipped(word,texto):
-    #TODO en el boletín comentan otra forma de resolverlo...
     try:
         aux = texto.lower().split()
         posicion = aux.index(word)
-        result = aux[max(0,posicion-10):min(len(aux)-1,posicion+10)]
+        result = aux[max(0,posicion-3):min(len(aux)-1,posicion+4)]
         result = " ".join(result)
     except:
         result = ""
-
     return result
 
 def listOfNotices(filename):
@@ -75,7 +60,6 @@ def imprimir(postingResultante,docid,words):
             print("\nTítulo: \n %s" %titulo)
             print("\nNoticia: \n %s" %clean_text(texto) )
     elif len(postingResultante) <=5:
-        #TODO mostrar titular y snipped
         for value in postingResultante:
             fileNameID = int(value[0])
             noticeID = int(value[1])-1
@@ -88,11 +72,12 @@ def imprimir(postingResultante,docid,words):
             print("\nTítulo: \n %s" %clean_text(titulo))
             texto_result = ""
             for w in words:
-                texto_result = texto_result + "\n" + snipped(w,clean_text(texto))
+                snip = snipped(w,clean_text(texto))
+                if snip != "":
+                    texto_result = texto_result + "\n" + snip
             #print("hola" + texto)
             print("\nNoticia: \n %s" %texto_result)
     else:
-        #TODO mostrar los 10 primeros
         for value in postingResultante[0:min(10,len(postingResultante))]:
             fileNameID = int(value[0])
             noticeID = int(value[1])-1
@@ -103,7 +88,6 @@ def imprimir(postingResultante,docid,words):
             titulo = root.find("TITLE").text
             print("\n-------------------------------------")
             print("\nTítulo: \n %s" %titulo)
-            #print("Noticia: \n %s" %texto)
     print("\n--------------------------------------------------------------------------")
     print("El número de noticias encontradas para los terminos especificados es: %d" %len(postingResultante))
     print("--------------------------------------------------------------------------\n")
@@ -113,7 +97,6 @@ def interseccion(postList1, postList2):
     i = 0
     j = 0
     while i<len(postList1) and j < len(postList2):
-        #TODO hacer testing
         if postList1[i][0] == postList2[j][0] and postList1[i][1] == postList2[j][1]:
             returndata.append(postList1[i])
             i+=1
@@ -153,7 +136,6 @@ def orAlg(postList1,postList2):
     i = 0
     j = 0
     while i<len(postList1) and j < len(postList2):
-        #TODO hacer testing
         if postList1[i][0] == postList2[j][0] and postList1[i][1] == postList2[j][1]:
             returndata.append(postList1[i])
             i+=1
@@ -198,6 +180,8 @@ def getIndex(word):
         elif words[0] == "date":
             return IndexDate.get(words[1])
 
+# TODO: Rehacer todo el método y pasar en el último parámetro del método
+#       "imprimir" todas las palábras que aparecen.
 def andOrNot(consulta,Index,docID):
     """
     Ampliación 1: permitimos consultas del estilo term1 and term2 or term3 and not term4.
@@ -213,7 +197,6 @@ def andOrNot(consulta,Index,docID):
     post1 = getIndex(consulta[0])
     operador = consulta[1]
     post2 = getIndex(consulta[2])
-
     #print("term1:%s operador: %s term2: %s" %(consulta[0],consulta[1],consulta[2]))
     result = []
     if post1 is not None and post2 is not None or operador == "or":
@@ -248,7 +231,10 @@ if __name__ == '__main__':
             print("\nSaliendo del programa...\n")
             exit()
         consulta = consulta.lower()
-        consulta_terms = consulta.split(" ")
+        consulta = consulta.replace('and not', 'andnot')
+        consulta = consulta.replace('or not', 'ornot')
+        consulta = consulta.replace('and', '')
+        consulta_terms = consulta.split()
         # En caso de que haya alguna conectiva, entramos en el método andOrNot
         if len(set(conectivas).intersection(consulta_terms)) > 0:
             andOrNot(consulta_terms,Index,docid)
