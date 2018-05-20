@@ -3,7 +3,7 @@ import pickle
 import re
 import xml.etree.ElementTree as ET
 clean_re = re.compile('\W+')
-conectivas = "and","or","andnot", "not", "ornot"
+conectivas = "and","or","andnot","not","ornot"
 terminos_ampliado = "headline","text","category","date"
 
 def clean_text(text):
@@ -106,27 +106,28 @@ def interseccion(postList1, postList2):
         elif postList1[i][0] == postList2[j][0] and postList1[i][1] > postList2[j][1] or postList1[i][0] > postList2[j][0]:
             j+=1
     return returndata
-def notAlg(postingList1):
-    return "hola" #Realmente, sería necesario devolver andNotAlg(Universo,postList1)
-def andNotAlg(postList1,postList2):
+
+def andnotAlg(postList1,postList2):
     """
     Devuelve una lista con los resultados de la operación postList1 and not postList2
     """
-    returndata = []
-    i = 0
-    j = 0
-    while i<len(postList1) and j < len(postList2):
-        if postList1[i][0] == postList2[j][0] and postList1[i][1] == postList2[j][1]:
-            i+=1
-            j+=1
-        elif postList1[i][0] == postList2[j][0] and postList1[i][1] < postList2[j][1] or postList1[i][0] < postList2[j][0] :
-            returndata.append(postList1[i])
-            i+=1
-        else:
-            j+=1
-    for iPost1 in range(i,len(postList1)):
-        returndata.append(postList1[iPost1])
-    return returndata
+    print("hola")
+    return list(set(postList1)-set(postList2))
+    # returndata = []
+    # i = 0
+    # j = 0
+    # while i<len(postList1) and j < len(postList2):
+    #     if postList1[i][0] == postList2[j][0] and postList1[i][1] == postList2[j][1]:
+    #         i+=1
+    #         j+=1
+    #     elif postList1[i][0] == postList2[j][0] and postList1[i][1] < postList2[j][1] or postList1[i][0] < postList2[j][0] :
+    #         returndata.append(postList1[i])
+    #         i+=1
+    #     else:
+    #         j+=1
+    # for iPost1 in range(i,len(postList1)):
+    #     returndata.append(postList1[iPost1])
+    # return returndata
 
 def orAlg(postList1,postList2):
     """
@@ -152,15 +153,51 @@ def orAlg(postList1,postList2):
         returndata.append(postList2[iPost2])
     return returndata
 
+def ornotAlg(postList1,postList2):
+    return None
+
 def operadores(post1,post2,operador):
     if operador == "and":
         return interseccion(post1,post2)
     elif operador == "or":
         return orAlg(post1,post2)
     elif operador == "andnot":
-        return andNotAlg(post1,post2)
+        return andnotAlg(post1,post2)
+    elif operador == "ornot":
+        return ornotAlg(post1,post2)
 
-# TODO: Sustituir los Index.get por este método
+# TODO: Rehacer todo el método y pasar en el último parámetro del método
+#       "imprimir" todas las palábras que aparecen.
+def andOrNot(consulta,docID):
+    """
+    Ampliación 1: permitimos consultas del estilo term1 and term2 or term3 andnot term4.
+    Podemos suponer que las consultas están correctamente escritas.
+    """
+    aux = list(consulta) # Copiamos "consulta" a "aux"
+    if aux[0] == "not": # Si la primera palabra es "not"...
+        try:
+            aux.pop(0) # Eliminamos el "not" inicial
+            # Y añadimos la postingList negada de la primera palabra
+            result = Universe-getIndex(aux.pop(0))
+        except:
+            result = []
+    else:
+        # Añadimos la postingList de la primera palabra
+        result = getIndex(aux.pop(0))
+    for i in range(0,len(aux)):
+        # El resto de "not" actuarán como "andnot"
+        aux[i] = aux[i].replace("not","andnot")
+    # Ahora pasamos a ampliar (o disminuir) el "result" con el resto de la consulta.
+    i = 0
+    while i < len(aux):
+        if aux[i] in conectivas:
+            result = operadores(result,getIndex(aux[i+1]),aux[i])
+            i = i+2
+        else:
+            result = operadores(result,getIndex(aux[i+1]),"and")
+            i = i+1
+    imprimir(result,docID,list(set(consulta) - set(conectivas)))
+
 def getIndex(word):
     """
     Ampliación 2: obtiene las referencias de los ficheros en la cual aparece
@@ -179,35 +216,6 @@ def getIndex(word):
             return IndexCategory.get(words[1])
         elif words[0] == "date":
             return IndexDate.get(words[1])
-
-# TODO: Rehacer todo el método y pasar en el último parámetro del método
-#       "imprimir" todas las palábras que aparecen.
-def andOrNot(consulta,Index,docID):
-    """
-    Ampliación 1: permitimos consultas del estilo term1 and term2 or term3 and not term4.
-    Podemos suponer que las consultas están correctamente escritas.
-    """
-    extension = []
-    for i in range(0,len(consulta)):
-        if i %2 != 0 and consulta[i] not in conectivas:
-            extension.append("and")
-        else:
-            extension.append(consulta[i])
-    consulta = extension
-    post1 = getIndex(consulta[0])
-    operador = consulta[1]
-    post2 = getIndex(consulta[2])
-    #print("term1:%s operador: %s term2: %s" %(consulta[0],consulta[1],consulta[2]))
-    result = []
-    if post1 is not None and post2 is not None or operador == "or":
-        result = operadores(post1,post2,operador)
-    for i in range(3, len(consulta)-1):
-        operador = consulta[i]
-        post2 = getIndex(consulta[i+1])
-        #print(" operador: %s term2: %s" %(consulta[i],consulta[i+1]))
-        if result is not None and post2 is not None or operador == "or":
-            result = operadores(result,post2,operador)
-    imprimir(result,docID,"")
 
 def load_object(fileName):
     """
@@ -237,7 +245,7 @@ if __name__ == '__main__':
         consulta_terms = consulta.split()
         # En caso de que haya alguna conectiva, entramos en el método andOrNot
         if len(set(conectivas).intersection(consulta_terms)) > 0:
-            andOrNot(consulta_terms,Index,docid)
+            andOrNot(consulta_terms,docid)
         else:
             result  = []
             if len(consulta_terms) == 1:
@@ -245,6 +253,8 @@ if __name__ == '__main__':
                 result = getIndex(consulta_terms[0])
                 if result is None:
                     result = []
+            elif len(consulta_terms) == 0:
+                result = []
             else:
                 post1 = getIndex(consulta_terms[0])
                 post2 = getIndex(consulta_terms[1])
