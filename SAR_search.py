@@ -178,7 +178,7 @@ def andOrNot(consulta,docID):
         try:
             aux.pop(0) # Eliminamos el "not" inicial
             # Y añadimos la postingList negada de la primera palabra
-            result = Universe-getIndex(aux.pop(0))
+            result = list(set(Universe)-set(getIndex(aux.pop(0))))
         except:
             result = []
     else:
