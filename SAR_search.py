@@ -160,7 +160,7 @@ def operadores(post1,post2,operador):
     elif operador == "andnot":
         return andnotAlg(post1,post2)
     elif operador == "ornot":
-        return orAlg(postList1,list(set(Universe)-set(postList2)))
+        return orAlg(postList1,andnotAlg(Universe,postList2))
 
 def andOrNot(consulta,docID):
     """
@@ -175,7 +175,7 @@ def andOrNot(consulta,docID):
             postL = getIndex(aux.pop(0))
             if postL == None:
                 postL = []
-            result = list(set(Universe)-set(postL))
+            result = andnotAlg(Universe,postL)
         except:
             result = []
     else:
